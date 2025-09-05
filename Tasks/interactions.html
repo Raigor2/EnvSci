@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Species Interactions Audio Assignment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #2d5a27;
+            --light-green: #4a7c59;
+            --accent-green: #7fb069;
+            --soft-green: #a7c957;
+            --cream: #f2f3ae;
+            --dark-bg: #1a2e1a;
+            --text-light: #ffffff;
+            --text-dark: #2d5a27;
+            --shadow: rgba(45, 90, 39, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 50%, var(--accent-green) 100%);
+            min-height: 100vh;
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Floating background elements */
+        .bg-element {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-element:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-element:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .bg-element:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px var(--shadow);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: var(--cream);
+            font-weight: 300;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.4s; }
+        .card:nth-child(4) { animation-delay: 0.6s; }
+        .card:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .card h2 {
+            color: var(--cream);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .instructions-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .instructions-list li {
+            counter-increment: step-counter;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: relative;
+            padding-left: 3rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .instructions-list li:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .instructions-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--soft-green);
+            color: var(--text-dark);
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .interactions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .interaction-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, background 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .interaction-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .interaction-card h3 {
+            color: var(--soft-green);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .interaction-card .definition {
+            font-style: italic;
+            margin-bottom: 0.5rem;
+            color: var(--cream);
+        }
+
+        /* .interaction-card .example { removed with examples } */
+
+        .rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .rubric-table th,
+        .rubric-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .rubric-table th {
+            background: var(--primary-green);
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .rubric-table tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--soft-green), var(--accent-green));
+            color: var(--text-dark);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+            to { box-shadow: 0 8px 25px rgba(167, 201, 87, 0.4); }
+        }
+
+        .timer-box {
+            display: inline-block;
+            background: var(--accent-green);
+            color: var(--text-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 0.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .canvas-logo {
+            width: 30px;
+            height: 30px;
+            background: var(--soft-green);
+            border-radius: 5px;
+            display: inline-block;
+            margin-right: 0.5rem;
+            position: relative;
+        }
+
+        .canvas-logo::after {
+            content: "C";
+            position: absolute;
+            color: var(--text-dark);
+            font-weight: bold;
+            font-size: 1.2rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .interactions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-element"></div>
+    <div class="bg-element"></div>
+    <div class="bg-element"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1>🌿 Species Interactions Audio Assignment</h1>
+            <p class="subtitle">Environmental Science | ESL Support</p>
+        </header>
+
+        <div class="card">
+            <h2><span class="icon">🎯</span>Assignment Overview</h2>
+            <div class="highlight-box">
+                <strong>Your Task:</strong> Create an audio recording explaining the 5 types of species interactions. 
+                Define each type and give one clear example for each.
+            </div>
+            <p><strong>Length:</strong> 
+                <span class="timer-box">1-3 minutes</span>
+            </p>
+            <p><strong>Language:</strong> You must speak in <u>English only</u>.</p>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">📚</span>Species Interactions to Include</h2>
+            <div class="interactions-grid">
+                <div class="interaction-card">
+                    <h3>1. Competition</h3>
+                    <div class="definition">Two organisms need the same limited resource.</div>
+                </div>
+                <div class="interaction-card">
+                    <h3>2. Predation</h3>
+                    <div class="definition">One organism kills and eats another.</div>
+                </div>
+                <div class="interaction-card">
+                    <h3>3. Mutualism</h3>
+                    <div class="definition">Both species benefit from the relationship.</div>
+                </div>
+                <div class="interaction-card">
+                    <h3>4. Commensalism</h3>
+                    <div class="definition">One species benefits, the other is unaffected.</div>
+                </div>
+                <div class="interaction-card">
+                    <h3>5. Parasitism</h3>
+                    <div class="definition">One species benefits, the other is harmed.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">🎤</span>Recording Instructions</h2>
+            <ol class="instructions-list">
+                <li>Go to your Canvas course and find this assignment.</li>
+                <li>Click on the assignment link.</li>
+                <li>Look for the <strong>"Record/Upload Media"</strong> button in Canvas.</li>
+                <li>Click <strong>"Record"</strong> to start recording your audio.</li>
+                <li>Speak clearly and at a steady pace.</li>
+                <li>Define each interaction type and give your example.</li>
+                <li>Click <strong>"Stop"</strong> when finished.</li>
+                <li>Review your recording by clicking <strong>"Play"</strong>.</li>
+                <li>If satisfied, click <strong>"Save"</strong> and then <strong>"Submit Assignment"</strong>.</li>
+            </ol>
+            
+            <div class="highlight-box">
+                <strong>🔊 Speaking Tips (English only):</strong>
+                <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+                    <li>Speak slowly and clearly.</li>
+                    <li>Use transition words: "First...", "Next...", "Finally...".</li>
+                    <li>Take a brief pause between each interaction type.</li>
+                    <li>If you make a mistake, keep going or start over.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">📊</span>Grading Rubric</h2>
+            <table class="rubric-table">
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th>Excellent (4)</th>
+                        <th>Good (3)</th>
+                        <th>Developing (2)</th>
+                        <th>Beginning (1)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Accuracy of Definitions</strong></td>
+                        <td>All 5 definitions are scientifically accurate and clear</td>
+                        <td>4 definitions are accurate and clear</td>
+                        <td>3 definitions are accurate and clear</td>
+                        <td>2 or fewer definitions are accurate</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Quality of Examples</strong></td>
+                        <td>All examples are relevant, specific, and correct</td>
+                        <td>4 examples are relevant and correct</td>
+                        <td>3 examples are relevant and correct</td>
+                        <td>2 or fewer examples are relevant</td>
+                    </tr>
+                    <tr>
+                        <td><strong>English Language Use</strong></td>
+                        <td>Uses accurate academic English vocabulary and clear pronunciation</td>
+                        <td>Uses mostly accurate English with good pronunciation</td>
+                        <td>Uses basic English with some errors but still understandable</td>
+                        <td>Limited English use with many errors affecting understanding</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Organization</strong></td>
+                        <td>All 5 interactions covered in logical order</td>
+                        <td>4-5 interactions covered with good organization</td>
+                        <td>3-4 interactions covered with some organization</td>
+                        <td>2 or fewer interactions covered</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Time Management</strong></td>
+                        <td>Recording is 1-3 minutes with complete content</td>
+                        <td>Recording is 1-3 minutes with mostly complete content</td>
+                        <td>Recording is slightly under/over time limit</td>
+                        <td>Recording is significantly under/over time limit</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">✅</span>Before You Submit</h2>
+            <div class="highlight-box">
+                <strong>Checklist:</strong>
+                <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+                    <li>✓ I defined all 5 interaction types</li>
+                    <li>✓ I gave one example for each type</li>
+                    <li>✓ My recording is 1-3 minutes long</li>
+                    <li>✓ I spoke clearly and at a good pace in English</li>
+                    <li>✓ I listened to my recording to check quality</li>
+                    <li>✓ I submitted my assignment in Canvas</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="canvas-logo"></span>Canvas Help</h2>
+            <p><strong>Can't find the Record button?</strong> Look for "Record/Upload Media" in your assignment submission area.</p>
+            <p><strong>Recording not working?</strong> Make sure your browser has microphone permission, or try refreshing the page.</p>
+            <p><strong>Need help?</strong> Ask your teacher or a classmate, or check Canvas Help in your course menu.</p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive hover effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 12px 40px rgba(45, 90, 39, 0.4)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 8px 32px rgba(45, 90, 39, 0.3)';
+                });
+            });
+            
+            // Add click animation to interaction cards
+            const interactionCards = document.querySelectorAll('.interaction-card');
+            interactionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.animation = 'none';
+                    setTimeout(() => {
+                        this.style.animation = 'pulse 0.6s ease-in-out';
+                    }, 10);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
